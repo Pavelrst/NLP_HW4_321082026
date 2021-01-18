@@ -1,0 +1,114 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{tikz}
+
+\usetikzlibrary{shapes}
+\usetikzlibrary{automata, positioning, arrows}
+
+\usepackage[shortlabels]{enumitem}
+\usepackage[noabbrev, capitalise]{cleveref}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ top=20mm,
+ bottom=25mm,
+ left=25mm,
+ right=25mm,
+ }
+
+% define your IDs here:
+\newcommand{\firststudentid}{341438711}
+\newcommand{\secondstudentid}{321082026}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Written Solution for Assignment 3}
+\chead{\firststudentid \qquad \secondstudentid}
+\lhead{Natural Language Processing}
+\rfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+\renewcommand{\footrulewidth}{1pt}
+ 
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\renewcommand{\baselinestretch}{1.25}
+
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\roman{subsubsection}}
+
+\begin{document}
+
+\section*{1. Neural Transition-Based Dependency Parsing}
+\paragraph{b}
+A parsing process of a sentence "I parsed this sentence
+correctly":
+
+\begin{table}[h!]
+\begin{tabular}{|l|l|l|l|l}
+\cline{1-4}
+\textbf{Stack}                    & \textbf{Buffer}                            & \textbf{New dependency} & \textbf{Transition}   &  \\ \cline{1-4}
+{[}ROOT{]}                        & {[}I, parsed, this, sentence, correctly{]} &                         & Initial Configuration &  \\ \cline{1-4}
+{[}ROOT, I{]}                     & {[}parsed, this, sentence, correctly{]}    &                         & SHIFT                 &  \\ \cline{1-4}
+{[}ROOT, I, parsed{]}             & {[}this, sentence, correctly{]}            &                         & SHIFT                 &  \\ \cline{1-4}
+{[}ROOT, parsed{]}                & {[}this, sentence, correctly{]}            & parsed $\rightarrow$ I                & LEFT-ARC              &  \\ \cline{1-4}
+{[}ROOT, parsed, this{]}          & {[}sentence, correctly{]}                  &                         & SHIFT                 &  \\ \cline{1-4}
+{[}ROOT, parsed, this,sentence{]} & {[}correctly{]}                            &                         & SHIFT                 &  \\ \cline{1-4}
+{[}ROOT, parsed, sentence{]}      & {[}correctly{]}                            & sentence $\rightarrow$ this           & LEFT-ARC              &  \\ \cline{1-4}
+{[}ROOT, parsed{]}                & {[}correctly{]}                            & parsed $\rightarrow$ sentence         & RIGHT-ARC             &  \\ \cline{1-4}
+{[}ROOT, parsed,correctly{]}      & {[}{]}                                     &                         & SHIFT                 &  \\ \cline{1-4}
+{[}ROOT, parsed{]}                & {[}{]}                                     & parsed $\rightarrow$ correctly        & RIGHT-ARC             &  \\ \cline{1-4}
+{[}ROOT{]}                        & {[}{]}                                     & ROOT $\rightarrow$ parsed             & RIGHT-ARC             &  \\ \cline{1-4}
+\end{tabular}
+\end{table}
+
+\paragraph{c}
+Each word must be added to stack, i.e. it's n SHIFT steps. \\
+Each word must be dependent on other word, i.e. it's n RIGHT/LEFT-ARC steps. \\
+One step for connecting to the ROOT. In total 2n+1 steps. \\
+
+\paragraph{g} Training results: \\
+dev UAS: 88.45 \\
+test UAS: 88.83 \\
+
+\paragraph{h}
+\begin{enumerate}
+\item
+"It is on loan from a guy named Joe O’Neill in Midland , Texas" \\
+    Error Type: Prepositional Phrase Attachment Error \\
+    Incorrect dependency: named $\rightarrow$ Midland \\
+    Correct dependency: guy $\rightarrow$ Midland \\
+
+\item
+"Brian has been one of the most crucial elements to the success of Mozilla software ." \\
+    Error Type: Modifier Attachment Error \\
+    Incorrect dependency: elements $\rightarrow$ most \\
+    Correct dependency: crucial $\rightarrow$ most \\
+
+\item
+"I was heading to a wedding fearing my death" \\
+    Error Type: Verb Phrase Attachment Error \\
+    Incorrect dependency: wedding $\rightarrow$ fearing \\
+    Correct dependency: heading $\rightarrow$ fearing \\
+    
+\item
+"It makes me want to rush out and rescue people from dilemmas of their own making." \\
+    Error Type: Coordination Attachment Error \\
+    Incorrect dependency: makes $\rightarrow$ rescue \\
+    Correct dependency: rush $\rightarrow$ rescue \\
+\end{enumerate}
+
+\section*{2. Syntactic Parsing}
+
+
+\section*{3. Semantic Parsing}
+
+
+
+\end{document}
