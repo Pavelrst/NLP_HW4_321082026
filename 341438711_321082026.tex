@@ -30,7 +30,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Written Solution for Assignment 3}
+\rhead{Written Solution for Assignment 4}
 \chead{\firststudentid \qquad \secondstudentid}
 \lhead{Natural Language Processing}
 \rfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
@@ -106,6 +106,22 @@ test UAS: 88.83 \\
 
 \section*{2. Syntactic Parsing}
 
+\begin{itemize}
+    \item[(a)] The long sentences are caused by the rules $NP \to NP \  PP$ and $PP \to Prep \ NP$, as these rules can apply recursively an infinite number of times. 
+
+    In particular, the first rule $NP \to NP \  PP$  contains the nonterminal symbol $NP$ on both the left and right hand sides, so it may be applied an infinite number of times.
+
+    The second rule can also be used to create infinite recursion by expanding $NP$ to $NP \  PP$ (rule 1) to $NP \ Prep \ NP$ (rule 2),
+
+    \item[(b)] At each iteration of the generation algorithm, a nonterminal is expanded by choosing a random expansion in proportion to their weights. The preterminal symbol $Noun$ has six expansions in the grammar, each of weight one ($Noun \to Adj \ Noun$, $Noun \to president$, $Noun \to airline$, etc.). Therefore every noun has only probability $1/6$ of being preceded by at least one adjective, probability $1/36$ of being preceded by at least two adjectives, and so forth (geometric distribution).
+
+    \item[(c)] The problem in (a) could be fixed by reducing the weight of the rule $NP \to NP \  PP$ (or increasing the weights of all other rules expanding $NP$). The problem in (b) could be fixed by increasing the weight of the rele $Noun \to Adj \ Noun$ (or decreasing the weight of all other rules expanding preterminal $Noun$).
+
+    \item[(d)] (implemented in cky.py)
+
+    \item[(e)] Output parse: (S (NP (Det the) (Noun president)) (VP (Verb ate) (NP (Det the) (Noun (Adj delicious) (Noun sandwich)))))
+
+\end{itemize}
 
 \section*{3. Semantic Parsing}
 

@@ -158,7 +158,51 @@ def cky(pcfg, sent):
 	bp = defaultdict(list)
 	sent = sent.split(" ")
 	### YOUR CODE HERE
-	raise NotImplementedError 
+
+	# note: this implementation is not efficient in the number of rules in the PCFG
+	# (each iteration loops through all the rules)
+	# this was not requested in the question so I assume it's fine, but it could be made
+	# more efficient by preprocessing the list of rules to swap values and keys before running CYK
+	n_tokens = len(sent)
+
+	# assign entries for expansions of length 1 (preterminals)
+	for start_idx, token in enumerate(sent):
+		for LHS in pcfg._rules:
+			for RHS, weight in pcfg._rules[LHS]:
+				if pcfg.is_preterminal(RHS) and RHS[0] == token:
+					prob = weight / pcfg._sums[LHS]
+					indices = (start_idx, start_idx, LHS)
+					pi[indices] = prob
+					bp[indices] = [-1, RHS]
+
+	# assign entries for longer expansions
+	for span_len in range(2, n_tokens + 1):
+		for start_idx1 in range(n_tokens - span_len + 1):
+			for partition_len1 in range(1, span_len):
+				for LHS in pcfg._rules:
+					for RHS, weight in pcfg._rules[LHS]:
+						if not pcfg.is_preterminal(RHS):
+							symbol1, symbol2 = RHS
+							rule_prob = weight / pcfg._sums[LHS]
+							
+							partition_len2 = span_len - partition_len1
+							start_idx2 = start_idx1 + partition_len1
+
+							indices1 = (start_idx1, start_idx1 + partition_len1 - 1, symbol1)
+							indices2 = (start_idx2, start_idx2 + partition_len2 - 1, symbol2)
+							indices_total = (start_idx1, start_idx1 + span_len - 1, LHS)
+
+							prob1 = pi[indices1]
+							prob2 = pi[indices2]
+							prob_total = pi[indices_total]
+
+							new_prob = rule_prob * prob1 * prob2
+							
+							if new_prob > prob_total:
+								backpointer = [start_idx2 - 1, (symbol1, symbol2)]
+								pi[indices_total] = new_prob
+								bp[indices_total] = backpointer
+
 	### END YOUR CODE
 	return bp,pi
 	
